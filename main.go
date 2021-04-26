@@ -13,15 +13,17 @@ import (
 )
 
 var (
-	numTests    int
-	seleniumUrl string
-	browserName string
+	numTests       int
+	seleniumUrl    string
+	pageUrl        string
+	browserName    string
 	browserVersion string
 )
 
 func init() {
 	flag.IntVar(&numTests, "num-tests", 1, "Max tests to run in parallel")
 	flag.StringVar(&seleniumUrl, "selenium-url", "http://localhost:4444/wd/hub", "Selenium URL to use")
+	flag.StringVar(&pageUrl, "page-url", "https://aerokube.com/", "Page URL to open")
 	flag.StringVar(&browserName, "browser-name", "chrome", "Browser to use")
 	flag.StringVar(&browserVersion, "browser-version", "87.0", "Browser version to use")
 	flag.Parse()
@@ -49,7 +51,7 @@ func runTest(wg *sync.WaitGroup, num int) {
 		log.Fatal(err)
 	}
 	defer wd.Quit()
-	_ = wd.Get("https://aerokube.com/")
+	_ = wd.Get(pageUrl)
 	scrn, _ := wd.Screenshot()
 	screenshotFile := fmt.Sprintf("screenshot%d.png", num)
 	_ = ioutil.WriteFile(screenshotFile, scrn, os.ModePerm)
